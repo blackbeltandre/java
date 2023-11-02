@@ -10,9 +10,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-
 /**
  *
  * @author mac
@@ -66,11 +68,12 @@ ResultSet RsBiodata=null;
         jButtonBatal = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTableBiodata = new javax.swing.JTable();
+        jButtonDelete = new javax.swing.JButton();
+        jButtonUpdate = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        home = new javax.swing.JMenuItem();
+        exit = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -94,6 +97,8 @@ ResultSet RsBiodata=null;
             }
         });
 
+        jTextFieldTanggalLahir.setToolTipText("");
+
         jTextFieldJurusan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextFieldJurusanActionPerformed(evt);
@@ -104,14 +109,19 @@ ResultSet RsBiodata=null;
         jTextAreaAlamat.setRows(5);
         jScrollPane1.setViewportView(jTextAreaAlamat);
 
-        jButtonSimpan.setText("Simpan");
+        jButtonSimpan.setText("Save");
         jButtonSimpan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSimpanActionPerformed(evt);
             }
         });
 
-        jButtonBatal.setText("Batal");
+        jButtonBatal.setText("Cancel");
+        jButtonBatal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBatalActionPerformed(evt);
+            }
+        });
 
         jTableBiodata.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -124,30 +134,46 @@ ResultSet RsBiodata=null;
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        jTableBiodata.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableBiodataMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTableBiodata);
+
+        jButtonDelete.setText("Delete");
+        jButtonDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDeleteActionPerformed(evt);
+            }
+        });
+
+        jButtonUpdate.setText("Update");
+        jButtonUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonUpdateActionPerformed(evt);
+            }
+        });
 
         jMenu1.setText("File");
 
-        jMenuItem1.setText("List Biodata");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        home.setText("Home");
+        home.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                homeActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem1);
+        jMenu1.add(home);
 
-        jMenuItem2.setText("Form Biodata");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        exit.setText("Exit");
+        exit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                exitActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem2);
+        jMenu1.add(exit);
 
         jMenuBar1.add(jMenu1);
-
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
@@ -158,7 +184,9 @@ ResultSet RsBiodata=null;
             .addGroup(layout.createSequentialGroup()
                 .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelJudul, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabelJudul, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(790, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -175,23 +203,27 @@ ResultSet RsBiodata=null;
                                     .addComponent(jLabel2))
                                 .addGap(61, 61, 61))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(54, 54, 54)
+                                        .addComponent(jButtonSimpan)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButtonSimpan)
-                                .addGap(26, 26, 26)
-                                .addComponent(jButtonBatal))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jTextFieldNamaLengkap, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jTextFieldTempatLahir)
-                                .addComponent(jTextFieldTanggalLahir)
-                                .addComponent(jTextFieldJurusan)
-                                .addComponent(jTextFieldNik)))
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jButtonUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButtonBatal)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButtonDelete))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jTextFieldNamaLengkap, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jTextFieldTempatLahir)
+                            .addComponent(jTextFieldTanggalLahir)
+                            .addComponent(jTextFieldJurusan)
+                            .addComponent(jTextFieldNik))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -229,11 +261,13 @@ ResultSet RsBiodata=null;
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButtonSimpan)
-                            .addComponent(jButtonBatal))
-                        .addGap(53, 53, 53))
+                            .addComponent(jButtonBatal)
+                            .addComponent(jButtonDelete)
+                            .addComponent(jButtonUpdate))
+                        .addGap(38, 38, 38))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(jScrollPane2)
+                        .addGap(12, 12, 12))))
         );
 
         pack();
@@ -241,7 +275,7 @@ ResultSet RsBiodata=null;
 
     private void tampilData(){
         try{
-            Object[] judul_kolom = {"Nama", "Tempat Lahir", "Tanggal Lahir", "Nik", "Alamat","Jurusan"};
+            Object[] judul_kolom = {"ID","Nama Lengkap", "Tempat Lahir", "Tanggal Lahir", "Nik", "Alamat","Jurusan"};
             tabModel=new DefaultTableModel(null,judul_kolom);
             jTableBiodata.setModel(tabModel);
             
@@ -252,11 +286,12 @@ ResultSet RsBiodata=null;
             RsBiodata=stt.executeQuery("SELECT * from biodata ");  
             while(RsBiodata.next()){
                 Object[] data={
+                    RsBiodata.getString("id"),
                     RsBiodata.getString("nama_lengkap"),
                     RsBiodata.getString("tempat_lahir"),
                     RsBiodata.getString("tanggal_lahir"),
                     RsBiodata.getString("nik"),
-                     RsBiodata.getString("alamat"),
+                    RsBiodata.getString("alamat"),
                     RsBiodata.getString("jurusan"),
                 };
                
@@ -282,25 +317,176 @@ ResultSet RsBiodata=null;
         String Nik=jTextFieldNik.getText();
         String Alamat=jTextAreaAlamat.getText();
         String Jurusan=jTextFieldJurusan.getText();
+        if (NamaLengkap.isEmpty() ) {
+            JOptionPane.showMessageDialog(null,"Nama Lengkap tidak boleh kosong");
+            jTextFieldNamaLengkap.requestFocus();
+        }
+        else if (TempatLahir.isEmpty()) {
+            JOptionPane.showMessageDialog(null,"Tempat Lahir tidak boleh kosong");
+            jTextFieldTempatLahir.requestFocus();
+        }
+        else if (TanggalLahir.isEmpty()) {
+            JOptionPane.showMessageDialog(null,"Tanggal Lahir tidak boleh kosong");
+            jTextFieldTanggalLahir.requestFocus();
+        }
+        else if (Nik.isEmpty()) {
+            JOptionPane.showMessageDialog(null,"Nik tidak boleh kosong");
+            jTextFieldNik.requestFocus();
+        }
+        else if (Alamat.isEmpty()) {
+            JOptionPane.showMessageDialog(null,"Alamat tidak boleh kosong");
+            jTextAreaAlamat.requestFocus();
+        }
+        else if (Jurusan.isEmpty()) {
+            JOptionPane.showMessageDialog(null,"Jurusan tidak boleh kosong");
+            jTextFieldJurusan.requestFocus();
+        }
+        else{
          try{
                 Connection conn=(Connection)koneksi.koneksiDB();
                 Statement stt=conn.createStatement();
                 stt.executeUpdate("insert into biodata(nama_lengkap,tempat_lahir,tanggal_lahir,nik,alamat,jurusan)"+
                     "VALUES('"+NamaLengkap+"','"+TempatLahir+"','"+TanggalLahir+"','"+Nik+"','"+Alamat+"','"+Jurusan+"')");
-                JOptionPane.showMessageDialog(this,"Data berhasil disimpan","Success",JOptionPane.INFORMATION_MESSAGE);
-            } catch(SQLException e){
+                 tampilData();
+                 JOptionPane.showMessageDialog(this,"Data berhasil disimpan","Success",JOptionPane.INFORMATION_MESSAGE);
+             tampilData();} catch(SQLException e){
                 JOptionPane.showMessageDialog(this,"Simpan data gagal\n"+e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
             }
     }//GEN-LAST:event_jButtonSimpanActionPerformed
-
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    }
+    private void BersihData(){
+        jTextFieldNamaLengkap.setText("");
+        jTextFieldTempatLahir.setText("");
+        jTextFieldTanggalLahir.setText("");
+        jTextFieldNik.setText(""); 
+        jTextAreaAlamat.setText("");
+        jTextFieldJurusan.setText("");
+    } 
+   
+    private void homeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homeActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+         this.setVisible(false);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Biodata.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println("Ready");
+        new Biodata().setVisible(true);   
+    }//GEN-LAST:event_homeActionPerformed
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+    private void exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+          this.setVisible(false);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FrmLogin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println("Ready");
+        new FrmLogin().setVisible(true);
+    }//GEN-LAST:event_exitActionPerformed
 
+    private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
+        // TODO add your handling code here:
+        String NIK=jTextFieldNik.getText();
+        if (NIK.isEmpty() ) {
+            JOptionPane.showMessageDialog(null,"NIK tidak boleh kosong");
+            jTextFieldNik.requestFocus();
+        }else if(JOptionPane.showConfirmDialog(null,"Apakah anda yakin akan menghapus data ini?",
+            "Informasi",JOptionPane.OK_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE)==JOptionPane.OK_OPTION){
+        try{
+            Connection conn=(Connection)koneksi.koneksiDB();
+            Statement stt=conn.createStatement();
+            stt.executeUpdate("DELETE FROM biodata WHERE nik='"+NIK+"'");
+            BersihData();
+            tampilData();
+            JOptionPane.showMessageDialog(this,"Data berhasil di hapus","Success",JOptionPane.INFORMATION_MESSAGE);
+        } catch(SQLException e){
+            JOptionPane.showMessageDialog(this,"Delete data gagal\n"+e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+        }
+        }
+    }//GEN-LAST:event_jButtonDeleteActionPerformed
+ void tblKeForm(){
+        jTextFieldNamaLengkap.setText(tabModel.getValueAt(jTableBiodata.getSelectedRow(),1)+"");
+        jTextFieldTempatLahir.setText(tabModel.getValueAt(jTableBiodata.getSelectedRow(),2)+"");
+        jTextFieldTanggalLahir.setText(tabModel.getValueAt(jTableBiodata.getSelectedRow(),3)+"");
+        jTextFieldNik.setText(tabModel.getValueAt(jTableBiodata.getSelectedRow(),4)+"");
+        jTextAreaAlamat.setText(tabModel.getValueAt(jTableBiodata.getSelectedRow(),5)+"");
+        jTextFieldJurusan.setText(tabModel.getValueAt(jTableBiodata.getSelectedRow(),6)+"");
+        jButtonUpdate.setEnabled(true);
+        jButtonDelete.setEnabled(true);
+        jButtonBatal.setEnabled(true);
+        jButtonSimpan.setEnabled(false);
+    }
+   
+    private void jButtonBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBatalActionPerformed
+        // TODO add your handling code here:
+        BersihData();
+        
+    }//GEN-LAST:event_jButtonBatalActionPerformed
+
+    private void jTableBiodataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableBiodataMouseClicked
+        // TODO add your handling code here:
+        seteditOn();
+        jTextFieldNik.setEnabled(false);
+        tblKeForm();
+    }//GEN-LAST:event_jTableBiodataMouseClicked
+
+    private void jButtonUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpdateActionPerformed
+        // TODO add your handling code here:
+        String NamaLengkap=jTextFieldNamaLengkap.getText();
+        String TempatLahir=jTextFieldTempatLahir.getText();
+        String TanggalLahir=jTextFieldTanggalLahir.getText();
+        String Nik=jTextFieldNik.getText();
+        String Alamat=jTextAreaAlamat.getText();
+        String Jurusan=jTextFieldJurusan.getText();
+        if (NamaLengkap.isEmpty() ) {
+            JOptionPane.showMessageDialog(null,"Nama Lengkap tidak boleh kosong");
+            jTextFieldNamaLengkap.requestFocus();
+        }
+        else if (TempatLahir.isEmpty()) {
+            JOptionPane.showMessageDialog(null,"Tempat Lahir tidak boleh kosong");
+            jTextFieldTempatLahir.requestFocus();
+        }
+        else if (TanggalLahir.isEmpty()) {
+            JOptionPane.showMessageDialog(null,"Tanggal Lahir tidak boleh kosong");
+            jTextFieldTanggalLahir.requestFocus();
+        }
+        else if (Nik.isEmpty()) {
+            JOptionPane.showMessageDialog(null,"Nik tidak boleh kosong");
+            jTextFieldNik.requestFocus();
+        }
+        else if (Alamat.isEmpty()) {
+            JOptionPane.showMessageDialog(null,"Alamat tidak boleh kosong");
+            jTextAreaAlamat.requestFocus();
+        }
+        else if (Jurusan.isEmpty()) {
+            JOptionPane.showMessageDialog(null,"Jurusan tidak boleh kosong");
+            jTextFieldJurusan.requestFocus();
+        }else{
+            try{
+                Connection conn=(Connection)koneksi.koneksiDB();
+                Statement stt=conn.createStatement();
+                stt.executeUpdate("UPDATE biodata SET nama_lengkap='"+NamaLengkap+"', tempat_lahir='"+TempatLahir+"', tanggal_lahir='"+TanggalLahir+"',"+
+                    "alamat='"+Alamat+"',"+
+                    "jurusan='"+Jurusan+"' WHERE nik='"+Nik+"'");
+                BersihData();
+                tampilData();
+                JOptionPane.showMessageDialog(this,"Data berhasil diubah","Success",JOptionPane.INFORMATION_MESSAGE);
+            } catch(SQLException e){
+                JOptionPane.showMessageDialog(this,"Ubah data gagal\n"+e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jButtonUpdateActionPerformed
+ private void seteditOn(){
+        jTextFieldNamaLengkap.setEnabled(true);
+        jTextFieldTempatLahir.setEnabled(true);
+        jTextFieldTanggalLahir.setEnabled(true);
+        jTextFieldNik.setEnabled(true);
+        jTextAreaAlamat.setEnabled(true);
+        jTextFieldJurusan.setEnabled(true);
+   }
     /**
      * @param args the command line arguments
      */
@@ -337,8 +523,12 @@ ResultSet RsBiodata=null;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem exit;
+    private javax.swing.JMenuItem home;
     private javax.swing.JButton jButtonBatal;
+    private javax.swing.JButton jButtonDelete;
     private javax.swing.JButton jButtonSimpan;
+    private javax.swing.JButton jButtonUpdate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -347,10 +537,7 @@ ResultSet RsBiodata=null;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabelJudul;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTableBiodata;
